@@ -1,12 +1,14 @@
-package com.example.civicengagementplatform.signIn
+package com.example.messaging.signIn
 
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
-import androidx.compose.ui.platform.LocalContext
-import com.example.chat_appication.R
+import com.example.civicengagementplatform.signIn.SignInResult
+import com.example.civicengagementplatform.signIn.UserData
+import com.example.messaging.R
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
+
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -36,7 +38,7 @@ class GoogleAuthUiClient(
         }
         return result?.pendingIntent?.intentSender
     }
-    suspend fun signInWithIntent(intent: Intent):SignInResult{
+    suspend fun signInWithIntent(intent: Intent): SignInResult {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredential = GoogleAuthProvider.getCredential(googleIdToken, null)
@@ -74,7 +76,7 @@ class GoogleAuthUiClient(
         }
     }
 
-    fun signedInUser() :UserData? = auth.currentUser?.run {
+    fun signedInUser() : UserData? = auth.currentUser?.run {
         UserData(
             userId = uid,
             userName = displayName,

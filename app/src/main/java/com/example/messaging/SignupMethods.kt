@@ -1,4 +1,4 @@
-package com.example.chat_appication
+package com.example.messaging
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

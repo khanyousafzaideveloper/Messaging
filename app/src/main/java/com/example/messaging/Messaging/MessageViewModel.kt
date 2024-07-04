@@ -1,11 +1,9 @@
-package com.example.civicengagementplatform.ui.Messaging
+package com.example.messaging.Messaging
 
 import android.content.ContentValues
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.firestore

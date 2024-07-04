@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.messaging.Messaging.MessageViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,6 +105,6 @@ fun MessageScreen(
 
 @Preview
 @Composable
-fun messagingPreview(){
+fun MessagingPreview(){
     MessageScreen()
 }
