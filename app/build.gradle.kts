@@ -62,13 +62,18 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation (libs.coil.compose)
+    //implementation (libs.coil.compose)
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+
+
     implementation("com.google.firebase:firebase-auth-ktx:23.0.0")
-    implementation ("com.google.android.gms:play-services-auth:20.5.0")
-    implementation(libs.firebase.auth.ktx)
+    implementation(libs.coil.compose.v222)
+
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
-    //implementation(libs.play.services.auth)
+    implementation(libs.play.services.auth)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,4 +81,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
 }

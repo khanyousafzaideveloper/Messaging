@@ -1,10 +1,9 @@
 package com.example.messaging
 
 
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import android.app.Activity.RESULT_OK
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -13,35 +12,27 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.messaging.signIn.GoogleAuthUiClient
 import com.example.civicengagementplatform.signIn.SignInScreen
 import com.example.civicengagementplatform.signIn.SignInViewModel
+import com.example.messaging.signIn.GoogleAuthUiClient
 import com.example.messaging.user_profile.ProfileScreen
 import com.google.android.gms.auth.api.identity.Identity
-import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.launch
 
 @Composable
-fun allDestinations(lifecycleScope: LifecycleCoroutineScope) {
-    val navController = rememberNavController()
+fun allDestinations(lifecycleScope: LifecycleCoroutineScope, navController: NavHostController) {
     val context = LocalContext.current
     val googleAuthUiClient by remember {
         mutableStateOf(GoogleAuthUiClient(context, Identity.getSignInClient(context)))
     }
 
-    // Initialize Firebase
-    LaunchedEffect(Unit) {
-        FirebaseApp.initializeApp(context)
-    }
-
-    NavHost(navController, startDestination = Screens.Profile.name) {
+    NavHost(navController, startDestination = Screens.Contacts.name) {
         composable(Screens.SignInMethods.name) {
             SignInMethods(
                 onSignOutGoogle = {
@@ -55,7 +46,9 @@ fun allDestinations(lifecycleScope: LifecycleCoroutineScope) {
                 // Additional UI for SignInMethods
             }
         }
-
+        composable(Screens.Contacts.name){
+            Contacts()
+        }
         composable(Screens.Profile.name) {
             ProfileScreen(
                 userData = googleAuthUiClient.signedInUser(),
@@ -106,6 +99,7 @@ fun allDestinations(lifecycleScope: LifecycleCoroutineScope) {
                     navController.navigate(Screens.Profile.name)
                     viewModel2.resetState()
                 }
+                storeUserInfo()
             }
 
             SignInScreen(
@@ -129,5 +123,6 @@ fun allDestinations(lifecycleScope: LifecycleCoroutineScope) {
 enum class Screens {
     SignInMethods,
     SignInGoogle,
+    Contacts,
     Profile
 }

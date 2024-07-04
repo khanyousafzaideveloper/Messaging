@@ -3,6 +3,7 @@ package com.example.messaging.signIn
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import android.util.Log
 import com.example.civicengagementplatform.signIn.SignInResult
 import com.example.civicengagementplatform.signIn.UserData
 import com.example.messaging.R
@@ -20,7 +21,6 @@ import java.util.concurrent.CancellationException
 class GoogleAuthUiClient(
     private val context: Context,
     private val oneTapClient: SignInClient
-
 )
 {
 
@@ -33,6 +33,7 @@ class GoogleAuthUiClient(
             ).await()
         }catch (e: Exception){
             e.printStackTrace()
+            Log.e("Sign-In", "Sign-in not successful")
             if(e is CancellationException) throw e
             null
         }
@@ -94,7 +95,7 @@ class GoogleAuthUiClient(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(context.getString(R.string.app_name))
+                    .setServerClientId(context.getString(R.string.default_web_client_id))
                     .build()
             )
             .setAutoSelectEnabled(true)
