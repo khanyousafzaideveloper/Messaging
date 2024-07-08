@@ -1,5 +1,6 @@
 package com.example.civicengagementplatform.ui.Messaging
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,9 +19,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,34 +33,50 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.messaging.Messaging.MessageViewModel
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun MessageScreen(
+    name:String,
+    id: String,
     messageViewModel: MessageViewModel = viewModel()
 ) {
-    Column (modifier= Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top){
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top
+    ) {
+        var message by remember { mutableStateOf("") }
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val messages = messageViewModel.messages.collectAsState()
 
-        var message by remember { mutableStateOf(messageViewModel.message) }
-
-
-        LazyColumn(modifier = Modifier
-            .weight(1f)
-            .fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
-            items(messageViewModel.texts) { messages ->
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            items(messages.value) { messageItem ->
+                val isCurrentUser = currentUser?.uid == messageItem.senderId
+                val alignment = if (isCurrentUser) Arrangement.End else Arrangement.Start
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = alignment) {
                     Card(
                         modifier = Modifier
-                            .padding(end = 16.dp, bottom = 16.dp, top = 16.dp, start = 40.dp)
+                            .padding(16.dp)
                             .border(
                                 3.dp,
                                 MaterialTheme.colorScheme.secondary,
-                                RoundedCornerShape(7.dp, 7.dp, 50.dp, 7.dp)
+                                RoundedCornerShape(
+                                    if (isCurrentUser) 7.dp else 50.dp,
+                                    7.dp,
+                                    if (isCurrentUser) 50.dp else 7.dp,
+                                    7.dp
+                                )
                             )
                     ) {
-
                         Text(
-                            text = messages,
+                            text = messageItem.messageContent,
                             fontWeight = FontWeight(500),
                             modifier = Modifier
                                 .padding(16.dp)
@@ -65,15 +84,6 @@ fun MessageScreen(
                         )
                     }
                 }
-//                Card(
-//                    modifier = Modifier
-//                        .padding(16.dp, end = 40.dp)
-//                        .border(3.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(7.dp, 7.dp, 7.dp, 40.dp))
-//                ) {
-//                    Text(text = messages, fontWeight = FontWeight(500), modifier = Modifier
-//                        .padding(16.dp)
-//                    )
-//                }
             }
         }
 
@@ -84,11 +94,10 @@ fun MessageScreen(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
-
             TextField(
                 value = message,
                 onValueChange = { message = it },
-                label = { Text(text = "Type a message") },
+                label = { Text(text = "Type a message to $name") },
                 maxLines = 2,
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                 modifier = Modifier
@@ -96,15 +105,18 @@ fun MessageScreen(
                     .weight(1f)
                     .border(2.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(20.dp))
             )
-            Button(onClick = { messageViewModel.OnSend() }) {
+            Button(onClick = {
+                if (message.isNotBlank() && currentUser != null) {
+                    messageViewModel.sendMessage(
+                        messageContent = message,
+                        senderId = currentUser.uid,
+                        receiverId = id
+                    )
+                    message = ""
+                }
+            }) {
                 Text(text = "Send")
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun MessagingPreview(){
-    MessageScreen()
 }

@@ -16,18 +16,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.civicengagementplatform.signIn.SignInScreen
 import com.example.civicengagementplatform.signIn.SignInViewModel
+import com.example.civicengagementplatform.ui.Messaging.MessageScreen
 import com.example.messaging.signIn.GoogleAuthUiClient
 import com.example.messaging.user_profile.ProfileScreen
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 
+var contact_name =""
+var current_userId=""
 @Composable
 fun allDestinations(lifecycleScope: LifecycleCoroutineScope, navController: NavHostController) {
     val context = LocalContext.current
+    val contactViewModel: ContactListViewModel = viewModel()
     val googleAuthUiClient by remember {
         mutableStateOf(GoogleAuthUiClient(context, Identity.getSignInClient(context)))
     }
@@ -47,7 +53,14 @@ fun allDestinations(lifecycleScope: LifecycleCoroutineScope, navController: NavH
             }
         }
         composable(Screens.Contacts.name){
-            Contacts()
+            ContactScreen(navController)
+        }
+        composable(route ="Message/{uname}/{id}") { backStackEntry ->
+            val uname = backStackEntry.arguments?.getString("uname")
+            val id = backStackEntry.arguments?.getString("id")
+            contact_name = uname?:""
+            current_userId = id?:""
+            MessageScreen(uname ?: "", id?:"")
         }
         composable(Screens.Profile.name) {
             ProfileScreen(
@@ -99,7 +112,7 @@ fun allDestinations(lifecycleScope: LifecycleCoroutineScope, navController: NavH
                     navController.navigate(Screens.Profile.name)
                     viewModel2.resetState()
                 }
-                storeUserInfo()
+                contactViewModel.storeUserInfo()
             }
 
             SignInScreen(
@@ -124,5 +137,6 @@ enum class Screens {
     SignInMethods,
     SignInGoogle,
     Contacts,
-    Profile
+    Profile,
+    Message
 }

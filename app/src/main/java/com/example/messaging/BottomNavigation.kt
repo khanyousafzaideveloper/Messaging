@@ -1,8 +1,10 @@
 package com.example.messaging
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material3.Badge
@@ -84,8 +86,8 @@ data class BottomNavigationItem(
 
 val items = listOf(
     BottomNavigationItem(
-        title = "Messages",
-        selectedItem = Icons.Filled.Email,
+        title = "Contacts",
+        selectedItem = Icons.AutoMirrored.Filled.List,
         unSelectedItem = Icons.Outlined.Email,
         hasNews = false,
         badgeCount = 2,
