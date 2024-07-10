@@ -14,7 +14,9 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 sealed interface ContactListUiState{
@@ -36,28 +38,26 @@ class ContactListViewModel: ViewModel(){
 
     private val _contactListUiState = mutableStateOf<ContactListUiState>(ContactListUiState.Loading)
     val contactListUiState : State<ContactListUiState> = _contactListUiState
-    val currentUser = FirebaseAuth.getInstance().currentUser
     val db = Firebase.firestore
-
-
     fun storeUserInfo() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
         currentUser?.let {
-            val userInfo = hashMapOf(
-                "id" to it.uid,
-                "name" to it.displayName,
-                "email" to it.email
+               val userInfo = hashMapOf(
+                   "id" to it.uid,
+                   "name" to it.displayName,
+                   "email" to it.email
 
-            )
+               )
 
-            db.collection("users").document(it.uid)
-                .set(userInfo)
-                .addOnSuccessListener {
-                    // User information stored successfully
-                }
-                .addOnFailureListener { e ->
-                    // Handle failure
-                }
-        }
+               db.collection("users").document(it.uid)
+                   .set(userInfo)
+                   .addOnSuccessListener {
+                       Log.d("userxx", "user added ${currentUser.email}")
+                   }
+                   .addOnFailureListener { e ->
+                       Log.d("userxx", "user not added${currentUser.email}")
+                   }
+           }
     }
 
 
@@ -68,6 +68,7 @@ class ContactListViewModel: ViewModel(){
 
 
     private fun getDataOfUsers() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
         viewModelScope.launch {
             try {
                 db.collection("users").addSnapshotListener { snapshot, e ->
@@ -81,7 +82,7 @@ class ContactListViewModel: ViewModel(){
                         val contactListObjects = snapshot.toObjects(User::class.java)
                         val filteredList = contactListObjects.filter { user ->
                             // Filter out the current user's data based on their unique identifier
-                            user.name != currentUser?.displayName
+                            user.id != currentUser?.uid
                         }
                         _contactListUiState.value = ContactListUiState.Success(filteredList)
                     } else {

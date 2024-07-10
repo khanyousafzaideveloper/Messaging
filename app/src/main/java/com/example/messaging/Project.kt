@@ -2,10 +2,12 @@ package com.example.messaging
 
 
 import android.app.Activity.RESULT_OK
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -16,10 +18,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.example.civicengagementplatform.signIn.SignInScreen
 import com.example.civicengagementplatform.signIn.SignInViewModel
 import com.example.civicengagementplatform.ui.Messaging.MessageScreen
@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 
 var contact_name =""
 var current_userId=""
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun allDestinations(lifecycleScope: LifecycleCoroutineScope, navController: NavHostController) {
     val context = LocalContext.current
@@ -69,7 +70,7 @@ fun allDestinations(lifecycleScope: LifecycleCoroutineScope, navController: NavH
                     lifecycleScope.launch {
                         googleAuthUiClient.signout()
                         Toast.makeText(context, "Signed Out", Toast.LENGTH_SHORT).show()
-                        navController.popBackStack()
+                        navController.navigate(Screens.Profile.name)
                     }
                 },
                 onClick = {
@@ -103,6 +104,7 @@ fun allDestinations(lifecycleScope: LifecycleCoroutineScope, navController: NavH
             )
             LaunchedEffect(key1 = state.isSignInSuccessful){
                 if(state.isSignInSuccessful){
+                    contactViewModel.storeUserInfo()
                     Toast.makeText(
                         context,
                         "Sign in Successful",
@@ -112,7 +114,6 @@ fun allDestinations(lifecycleScope: LifecycleCoroutineScope, navController: NavH
                     navController.navigate(Screens.Profile.name)
                     viewModel2.resetState()
                 }
-                contactViewModel.storeUserInfo()
             }
 
             SignInScreen(
@@ -138,5 +139,4 @@ enum class Screens {
     SignInGoogle,
     Contacts,
     Profile,
-    Message
 }

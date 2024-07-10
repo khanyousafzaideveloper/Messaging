@@ -88,9 +88,8 @@ val items = listOf(
     BottomNavigationItem(
         title = "Contacts",
         selectedItem = Icons.AutoMirrored.Filled.List,
-        unSelectedItem = Icons.Outlined.Email,
+        unSelectedItem = Icons.AutoMirrored.Filled.List,
         hasNews = false,
-        badgeCount = 2,
         destination = Screens.Contacts.name
     ),
     BottomNavigationItem(

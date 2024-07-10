@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.civicengagementplatform.signIn.UserData
 import com.example.messaging.R
@@ -82,7 +83,11 @@ fun ProfileScreen(
         }
            
                 Button(onClick =  if(userData!=null) {onSignOut} else{onClick}  , modifier =Modifier.fillMaxWidth()) {
-                    Text(text = if(userData!=null) {"Log out"} else{"Log in"})
+                    Text(
+                        text = if(userData!=null) {"Log out"} else{"Log in"},
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight(600)
+                        )
                 }
     }
 }

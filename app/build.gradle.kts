@@ -65,7 +65,14 @@ dependencies {
     //implementation (libs.coil.compose)
     // Import the BoM for the Firebase platform
     implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+    implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
 
+    // Add the dependencies for the Firebase Cloud Messaging and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-analytics")
+
+    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
 
     implementation("com.google.firebase:firebase-auth-ktx:23.0.0")
     implementation(libs.coil.compose.v222)
@@ -73,6 +80,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
+    implementation(libs.firebase.messaging)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
